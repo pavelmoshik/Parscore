@@ -1,0 +1,13 @@
+{
+  "name": "parscore",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "parscore.js",
+  "scripts": {
+    "start": "node parscore.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0"
+  }
+}

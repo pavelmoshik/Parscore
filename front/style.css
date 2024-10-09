@@ -1,0 +1,156 @@
+body {
+    background-color: #181818;
+    color: #fff;
+    font-family: sans-serif;
+    margin: 0;
+   }
+   
+   header {
+    background-color: #282828;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   }
+   
+   .logo h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+   }
+   
+   nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+   }
+   
+   nav li {
+    margin-left: 20px;
+   }
+   
+   nav a {
+    color: #fff;
+    text-decoration: none;
+   }
+   
+   .container {
+    display: flex; /* Используем flexbox для container */
+    justify-content: center; /* Центрируем содержимое container */
+    margin: 0 auto;
+    max-width: 1200px;
+   }
+   
+   .content {
+    display: flex;
+    gap: 20px;
+    width: 100%; /* Занимает всю ширину экрана */
+   }
+   
+   .content_main {
+    display: grid;
+    grid-template-areas:
+     "myMenu liveTable sideMenu"
+     "myMenu liveTable bannerZone";
+    grid-template-columns: 172px 1fr auto; /* 1fr сделает matches-container гибким */
+    grid-template-rows: auto minmax(calc(100vh - 160px), 1fr);
+    padding-top: 24px;
+    position: relative;
+   }
+   
+   .sidebar {
+    background-color: #282828;
+    padding: 20px;
+    border-radius: 5px;
+    grid-area: sideMenu;
+   }
+   
+   .matches-container {
+    background-color: #00141e;
+    padding: 20px;
+    border-radius: 5px;
+    grid-area: liveTable;
+    min-height: 100vh;
+   }
+   
+   .matches-content {
+    padding: 20px;
+    border-radius: 5px;
+   }
+   
+   section {
+    margin-bottom: 20px;
+   }
+   
+   h2 {
+    color: #e0e0e0;
+    margin-bottom: 10px;
+   }
+   
+   .match-container {
+    border-radius: 8px;
+   }
+   
+   .match {
+    background-color: #383838;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+   }
+   
+   .team {
+    display: flex;
+    align-items: center;
+   }
+   
+   .team-name {
+    font-weight: bold;
+    margin-right: 10px;
+   }
+   
+   .score {
+    font-size: 20px;
+   }
+   
+   .time {
+    font-size: 16px;
+    color: #e0e0e0;
+   }
+   
+   footer {
+    background-color: #282828;
+    padding: 10px;
+    text-align: center;
+   }
+   
+   /* Оптимизация: */
+   .logo,
+   nav,
+   .content,
+   .sidebar,
+   .matches-container,
+   .matches-content,
+   section,
+   .match-container,
+   .match,
+   .team,
+   .team-name,
+   .score,
+   .time,
+   footer {
+    box-sizing: border-box; /* Включает отступы и границы в ширину и высоту */
+   }
+   
+   .sidebar,
+   .matches-container {
+    border-radius: 5px; /* Объединяет стили скругления */
+   }
+   
+   .content_main > *,
+   .match-container > * {
+    margin: 0; /* Убирает стандартные отступы */
+   }
+   
