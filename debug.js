@@ -4,7 +4,7 @@ import { writeFile } from 'fs/promises';
 const headers = { "x-fsign": "SW9D1eZo" };
 
 async function main() {
-  const feed = "r_4_1";
+  const feed = "f_4_0_3_ru-kz_1";
   const url = `https://d.flashscorekz.com/x/feed/${feed}`;
 
   while (true) { // Бесконечный цикл для повторения запроса
@@ -16,7 +16,7 @@ async function main() {
 
       let fileContent = "";
       for (let i = 0; i < data.length; i++) {
-        if (data[i].startsWith("~AA")) {
+        if (data[i].startsWith("~ZA", "~AA")) {
           fileContent += "\n" + data[i]; 
         } else {
           fileContent += "¬" + data[i]; 

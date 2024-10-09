@@ -1,17 +1,37 @@
-// liveMatchParser.js
 import axios from 'axios';
-import { HEADERS, buildApiUrl } from '../config.js';
+import { HEADERS, buildApiUrl, isLiveLeagueAllowed } from '../config.js';
 
-export const fetchLiveMatchData = async (matchId) => {
+export const fetchLiveMatchData = async (structuredData) => {
   const staticPart = 'df_st_1_';
-  const dynamicPart = matchId; // Динамическая часть, полученная из dataProcessor.js
-  const fullUrl = buildApiUrl(staticPart + dynamicPart); // Формируем полный URL
 
-  try {
-    const response = await axios.get(fullUrl, { headers: HEADERS });
-    return response.data; // Возвращаем данные о лайв-матчах
-  } catch (error) {
-    console.error(`Ошибка при получении лайв-матчей: ${error.message}`);
-    throw error;
+  // Извлекаем матчи из переданных данных и фильтруем их
+  const filteredMatches = Object.entries(structuredData)
+    .flatMap(([leagueName, [leagueInfo, matches]]) => 
+      isLiveLeagueAllowed(leagueInfo['ZC']) ? matches.filter(match => match['AB'] === '2') : []
+    );
+
+  // Проверяем, есть ли отфильтрованные матчи
+  if (filteredMatches.length === 0) {
+    console.log("Нет матчей, соответствующих критериям фильтрации.");
+    return; // Выходим из функции, если матчей нет
+  }
+
+  console.log("Отфильтрованные матчи:", filteredMatches);
+
+  // Перебираем отфильтрованные матчи
+  for (const match of filteredMatches) {
+    const dynamicPart = match['~AA']; // Используем ID матча
+    const fullUrl = buildApiUrl(staticPart + dynamicPart);
+    
+    // Проверка формируемого URL
+    console.log(`Формируемый URL: ${fullUrl}`);
+
+    try {
+      const response = await axios.get(fullUrl, { headers: HEADERS });
+      console.log(`Данные для матча ${dynamicPart}:`, response.data);
+    } catch (error) {
+      console.error(`Ошибка при получении лайв-матчей для ${dynamicPart}: ${error.message}`);
+    }
   }
 };
+

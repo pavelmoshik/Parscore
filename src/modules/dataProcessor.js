@@ -1,20 +1,15 @@
-// dataProcessor.js
 import axios from 'axios';
 import { HEADERS, buildApiUrl, isLeagueAllowed, FILTERED_KEYS_LEAGUE, FILTERED_KEYS_MATCH } from '../config.js';
+
 const MATCH_DYNAMIC_PART = 'f_4_0_3_ru-kz_1'; // Объявляем динамическую часть как константу
 
 export const processData = (data) => {
-  // const startStructuredTime = performance.now(); // Начало отсчета времени парсинга
-  
   const structuredData = {};
-  let currentLeague = null;
+  let currentLeague = null;  // Объявляем currentLeague
   let leagueData = {};
   let matchData = [];
 
-   // Хранение идентификаторов матчей
-  const matchIds = []; 
-
-  data.forEach((item, index) => {
+  data.forEach((item) => {
     const [key, value] = item.split('÷');
 
     if (key.includes('~ZA')) {
@@ -22,6 +17,7 @@ export const processData = (data) => {
         structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
       }
 
+      // Обновление текущей лиги и сброс данных
       currentLeague = value;
       leagueData = {};
       matchData = [];
@@ -32,31 +28,20 @@ export const processData = (data) => {
     }
 
     if (FILTERED_KEYS_MATCH[key]) {
+      // Если массив матчей пустой или это первый элемент, создаем новый объект матча
       if (matchData.length === 0 || key === '~AA') {
         matchData.push({});
       }
       matchData[matchData.length - 1][key] = value;
-
-      // Добавление идентификатора матча в массив
-      if (key === '~AA') {
-        matchIds.push(value); // Предполагаем, что значение ~AA - это идентификатор матча
-      }
-
-    }
-
-    if (
-      index === data.length - 1 &&
-      currentLeague &&
-      isLeagueAllowed(leagueData.ZC)
-    ) {
-      structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
     }
   });
 
-  //const endStructuredTime = performance.now(); // Конец отсчета времени парсинга
-  //console.log(`Структуризация выполнена за ${((endRequestTime - startRequestTime) / 1000).toFixed(2)} секунд.`);
+  // Проверка последней лиги
+  if (currentLeague && isLeagueAllowed(leagueData.ZC)) {
+    structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
+  }
 
-  return { structuredData, matchIds }; // Возвращаем также идентификаторы матчей
+  return { structuredData }; // Возвращаем структурированные данные
 };
 
 // Функция для получения данных с API и их обработки
@@ -75,4 +60,3 @@ export const fetchAndProcessData = async () => {
     throw error; // Пробрасываем ошибку выше
   }
 };
-

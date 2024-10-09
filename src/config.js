@@ -8,8 +8,10 @@ const HEADERS = { 'x-fsign': process.env.API_FSIGN || 'defaultKey' };
 const OUTPUT_FILE = process.env.OUTPUT_FILE || 'default.json';
 
 const ALLOWED_LEAGUE_KEYS = JSON.parse(process.env.ALLOWED_LEAGUE_KEYS);   // Фильтр лиг
+const ALLOWED_LIVE_LEAGUE_KEYS = JSON.parse(process.env.ALLOWED_LIVE_LEAGUE_KEYS);   // Загрузка ключей лиг для лайв-матчей
 const FILTERED_KEYS_LEAGUE = JSON.parse(process.env.FILTERED_KEYS_LEAGUE); // Фильтр ключей лиги
 const FILTERED_KEYS_MATCH = JSON.parse(process.env.FILTERED_KEYS_MATCH);   // Фильтр ключей матча
+
 
 
 // Функция для создания полного URL на основе динамичной части
@@ -18,17 +20,19 @@ const buildApiUrl = (dynamicPart) => {
 };
 
 const isLeagueAllowed = (leagueId) => ALLOWED_LEAGUE_KEYS[leagueId] === true;
-
+const isLiveLeagueAllowed = (leagueId) => ALLOWED_LIVE_LEAGUE_KEYS[leagueId] === true; // Функция проверки разрешенной лиги для лайв-матчей
 const REALTIME_API_URL = process.env.REALTIME_API_URL || 'https://your-realtime-api-url.com/data'; // API ссылка
 
 export {
-
   HEADERS,
   OUTPUT_FILE,
   FILTERED_KEYS_LEAGUE,
   FILTERED_KEYS_MATCH,
   REALTIME_API_URL,      // API экспорт
-  isLeagueAllowed,
+  isLeagueAllowed,        // Экспорт функции проверки лиги
+  isLiveLeagueAllowed,     // Экспорт функции проверки лиги для лайв-матчей
   buildApiUrl,           // Динамическая ссылка
+  ALLOWED_LEAGUE_KEYS,   // Экспортируем ключи лиг
+  ALLOWED_LIVE_LEAGUE_KEYS, // Экспортируем ключи лиг для лайв-матчей
 
 };

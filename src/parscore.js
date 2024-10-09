@@ -9,16 +9,13 @@ async function main() {
   
 
     // Получение структурированных данных и идентификаторов матчей
-    const { structuredData, matchIds } = await fetchAndProcessData(); // Запрос и обработка данных для матчей
+    const { structuredData } = await fetchAndProcessData(); // Запрос и обработка данных для матчей
+
+       // Получение и фильтрация live-матчей
+       await fetchLiveMatchData(structuredData);
 
     //console.log('Структурированные данные матчей:', structuredData);
 
-    // Если есть идентификаторы матчей, получить данные для лайв-матчей
-    for (const matchId of matchIds) {
-      const liveMatchData = await fetchLiveMatchData(matchId); // Получение лайв-матчей для каждого идентификатора
-      console.log(`Данные лайв-матча для ${matchId}:`, liveMatchData);
-    }
-    
     await saveToFileAsync(structuredData, OUTPUT_FILE); // Сохранение данных матчей в файл
 
   } catch (error) {
