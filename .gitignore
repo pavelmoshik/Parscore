@@ -4,6 +4,5 @@ yarn-error.log*
 *.log
 hockeymatches.json*
 culd.txt*
-debjs.js*
-debug.js*
-dedebug.json
+dbmatch.txt*
+debug.json*
