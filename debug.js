@@ -4,8 +4,8 @@ import { writeFile } from 'fs/promises';
 const headers = { "x-fsign": "SW9D1eZo" };
 
 async function main() {
-  const feed = "f_4_0_3_ru-kz_1";
-  const url = `https://d.flashscorekz.com/x/feed/${feed}`;
+  const feed = "df_hh_1_nHMV3tJ6";
+  const url = `https://46.flashscore.ninja/46/x/feed/${feed}`;
 
   while (true) { // Бесконечный цикл для повторения запроса
     const startTime = Date.now();
