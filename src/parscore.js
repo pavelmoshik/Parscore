@@ -6,17 +6,19 @@ import { OUTPUT_FILE } from './config.js'; // Импорт переменной 
 
 async function main() {
   try {
-  
+
 
     // Получение структурированных данных и идентификаторов матчей
     const { structuredData } = await fetchAndProcessData(); // Запрос и обработка данных для матчей
 
-       // Получение и фильтрация live-матчей
-       await fetchLiveMatchData(structuredData);
+    
 
     //console.log('Структурированные данные матчей:', structuredData);
 
     await saveToFileAsync(structuredData, OUTPUT_FILE); // Сохранение данных матчей в файл
+
+    // Получение и фильтрация live-матчей
+    await fetchLiveMatchData(structuredData);
 
   } catch (error) {
     console.error(`Ошибка в процессе: ${error.message}`);
