@@ -1,11 +1,59 @@
+// src/modules/dataProcessor.js
+
 import axios from 'axios';
-import { HEADERS, buildApiUrl, isLeagueAllowed, FILTERED_KEYS_LEAGUE, FILTERED_KEYS_MATCH } from '../config.js';
+import {
+  HEADERS,
+  buildApiUrl,
+  isLeagueAllowed,
+  FILTERED_KEYS_LEAGUE,
+  FILTERED_KEYS_MATCH
+} from '../config.js';
 
-const MATCH_DYNAMIC_PART = 'f_4_0_3_ru-kz_1'; // Объявляем динамическую часть как константу
+const MATCH_DYNAMIC_PART = 'f_4_0_3_ru-kz_1'; // Динамическая часть URL
 
+/**
+ * Сохраняет данные лиги в структурированные данные.
+ *
+ * @param {Object} structuredData - Структурированные данные.
+ * @param {string|null} currentLeague - Текущая лига.
+ * @param {Object} leagueData - Данные лиги.
+ * @param {Array} matchData - Данные матчей.
+ */
+const saveLeagueData = (structuredData, currentLeague, leagueData, matchData) => {
+  if (currentLeague && isLeagueAllowed(leagueData.ZC)) {
+    structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
+  }
+};
+
+/**
+ * Сохраняет данные лиги или матча.
+ *
+ * @param {string} key - Ключ данных.
+ * @param {string} value - Значение данных.
+ * @param {Object} leagueData - Данные лиги.
+ * @param {Array} matchData - Данные матчей.
+ */
+const saveLeagueOrMatchData = (key, value, leagueData, matchData) => {
+  const isKeyForLeague = FILTERED_KEYS_LEAGUE[key];
+  const isKeyForMatch = FILTERED_KEYS_MATCH[key];
+
+  if (isKeyForLeague) leagueData[key] = value;
+  
+  if (isKeyForMatch) {
+      if (matchData.length === 0 || key === '~AA') matchData.push({});
+      matchData[matchData.length - 1][key] = value;
+  }
+};
+
+/**
+ * Обрабатывает сырые данные и структурирует их по лигам и матчам.
+ *
+ * @param {Array<string>} data - Сырые данные.
+ * @returns {Object} Структурированные данные.
+ */
 export const processData = (data) => {
   const structuredData = {};
-  let currentLeague = null;  // Объявляем currentLeague
+  let currentLeague = null;
   let leagueData = {};
   let matchData = [];
 
@@ -13,50 +61,38 @@ export const processData = (data) => {
     const [key, value] = item.split('÷');
 
     if (key.includes('~ZA')) {
-      if (currentLeague && isLeagueAllowed(leagueData.ZC)) {
-        structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
-      }
-
-      // Обновление текущей лиги и сброс данных
+      saveLeagueData(structuredData, currentLeague, leagueData, matchData);
       currentLeague = value;
       leagueData = {};
       matchData = [];
     }
 
-    if (FILTERED_KEYS_LEAGUE[key]) {
-      leagueData[key] = value;
-    }
-
-    if (FILTERED_KEYS_MATCH[key]) {
-      // Если массив матчей пустой или это первый элемент, создаем новый объект матча
-      if (matchData.length === 0 || key === '~AA') {
-        matchData.push({});
-      }
-      matchData[matchData.length - 1][key] = value;
-    }
+    saveLeagueOrMatchData(key, value, leagueData, matchData);
   });
 
-  // Проверка последней лиги
-  if (currentLeague && isLeagueAllowed(leagueData.ZC)) {
-    structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
-  }
-
-  return { structuredData }; // Возвращаем структурированные данные
+  // Сохраняем данные последней лиги
+  saveLeagueData(structuredData, currentLeague, leagueData, matchData);
+  return { structuredData };
 };
 
-// Функция для получения данных с API и их обработки
+/**
+ * Получает данные с API и обрабатывает их.
+ *
+ * @returns {Promise<Object>} Структурированные данные.
+ * @throws {Error} Если запрос к API завершился с ошибкой.
+ */
 export const fetchAndProcessData = async () => {
   const fullUrl = buildApiUrl(MATCH_DYNAMIC_PART);
   try {
-    const startRequestTime = performance.now(); // Таймер запроса API 
-    const response = await axios.get(fullUrl, { headers: HEADERS }); 
+    const startRequestTime = performance.now();
+    const response = await axios.get(fullUrl, { headers: HEADERS });
     const endRequestTime = performance.now();
-    console.log(`Запрос данных занял ${((endRequestTime - startRequestTime) / 1000).toFixed(2)} секунд.`);
+    console.log(`Запрос данных занял ${(endRequestTime - startRequestTime) / 1000} секунд.`);
 
-    const data = response.data.split('¬'); // Разделение данных на основе '¬'
-    return processData(data); // Возвращаем обработанные данные
+    const data = response.data.split('¬');
+    return processData(data);
   } catch (error) {
     console.error(`Ошибка при получении данных: ${error.message}`);
-    throw error; // Пробрасываем ошибку выше
+    throw error;
   }
 };
