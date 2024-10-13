@@ -1,46 +1,60 @@
 import axios from 'axios';
-import { HEADERS, buildApiUrl } from '../config.js';
+import { HEADERS, buildApiUrl, isCollectorLeagueAllowed, TEAM_COLLECTOR_OUTPUT_FILE } from '../config.js';
+import { parseDataToArray } from './dataStructurizer.js';
+import { saveToFileAsync } from '../fileManager.js';
 
 export const fetchAllMatchData = async (structuredData) => {
-  const staticPart = 'df_hh_1_'; // Обновлено значение staticPart
-
-  // Получаем идентификаторы всех матчей в отфильтрованных данных
-  const allMatchIds = Object.entries(structuredData)
-    .flatMap(([leagueId, [leagueInfo, matches]]) => matches.map(match => match['~AA'])); // Собираем идентификаторы всех матчей
-
-  if (!allMatchIds.length) {
-    console.log("Нет матчей в отфильтрованных данных.");
-    return;
-  }
-
-  console.log("Идентификаторы всех матчей:", allMatchIds);
-
-  for (const matchId of allMatchIds) {
-    const fullUrl = buildApiUrl(staticPart + matchId);
-
-    console.log(`Формируемый URL: ${fullUrl}`);
-
-    try {
-      const response = await axios.get(fullUrl, { headers: HEADERS });
-      console.log(`Данные для матча '${matchId}' получены:`, response.data); // Показываем полученные данные
-
-      // Структурируем и выводим данные
-      const structuredMatchData = structureMatchData(response.data, matchId);
-      console.log(`Данные для матча ${matchId} структурированы:`, structuredMatchData); // Показываем структурированные данные
-
-    } catch (error) {
-      console.error(`Ошибка при получении данных для матча ${matchId}: ${error.message}`);
+    if (!structuredData || Object.keys(structuredData).length === 0) {
+        console.log("Нет входящих данных для обработки.");
+        return null;
     }
-  }
+
+    const staticPart = 'df_hh_1_';
+    const allMatchData = [];
+
+    const allMatchIds = Object.entries(structuredData)
+        .flatMap(([_, [leagueInfo, matches]]) =>
+            isCollectorLeagueAllowed(leagueInfo.ZC)
+                ? matches.map(match => ({ matchId: match['~AA'], leagueZC: leagueInfo.ZC }))
+                : []
+        );
+
+    if (allMatchIds.length === 0) {
+        console.log("Нет матчей для обработки.");
+        return null;
+    }
+
+    const fetchMatchDataPromises = allMatchIds.map(async ({ matchId, leagueZC }) => {
+        try {
+            const dynamicPart = `${staticPart}${matchId}`;
+            const apiUrl = buildApiUrl(dynamicPart);
+            const response = await axios.get(apiUrl, { headers: HEADERS });
+            return { data: response.data, leagueZC };
+        } catch (error) {
+            console.error(`Ошибка при получении данных для матча ${matchId}: ${error.message}`);
+            return null;
+        }
+    });
+
+    const matchDataResults = await Promise.allSettled(fetchMatchDataPromises);
+    matchDataResults.forEach(result => {
+        if (result.status === 'fulfilled' && result.value) {
+            allMatchData.push(result.value.data);
+        }
+    });
+
+    if (allMatchData.length > 0) {
+        const rawData = allMatchData.join('~');
+        const parsedResult = parseDataToArray(rawData, allMatchIds);
+
+        try {
+            await saveToFileAsync(parsedResult, TEAM_COLLECTOR_OUTPUT_FILE);
+            console.log('Данные успешно сохранены.');
+            return parsedResult;
+        } catch (error) {
+            console.error('Ошибка при сохранении файла:', error.message);
+        }
+    }
+
+    return null;
 };
-
-// Пример функции структурирования данных матча
-const structureMatchData = (data, matchId) => {
-  // Структурирование данных матча (можно добавить дополнительную обработку)
-  return {
-    matchId,
-    details: data, // Сюда можно добавить логику по извлечению нужных полей из data
-  };
-};
-
-
