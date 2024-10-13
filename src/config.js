@@ -1,5 +1,5 @@
+/* eslint-disable no-undef */
 // config.js
-// src/config.js
 
 import dotenv from 'dotenv';
 
@@ -21,16 +21,27 @@ const safeJsonParse = (jsonString, defaultValue = {}) => {
   }
 };
 
-const BASE_URL = process.env.API_BASE_URL || 'https://46.flashscore.ninja/46/x/feed/';
+const BASE_URL =
+  process.env.API_BASE_URL || 'https://46.flashscore.ninja/46/x/feed/';
 const HEADERS = { 'x-fsign': process.env.API_FSIGN || 'defaultKey' };
 const OUTPUT_FILE = process.env.OUTPUT_FILE || 'hockeymatches.json';
-const TEAM_COLLECTOR_OUTPUT_FILE = process.env.TEAM_COLLECTOR_OUTPUT_FILE || 'teamMatchesData.json';
+const TEAM_COLLECTOR_OUTPUT_FILE =
+  process.env.TEAM_COLLECTOR_OUTPUT_FILE || 'teamMatchesData.json';
 
 const ALLOWED_LEAGUE_KEYS = safeJsonParse(process.env.ALLOWED_LEAGUE_KEYS, {});
-const ALLOWED_LIVE_LEAGUE_KEYS = safeJsonParse(process.env.ALLOWED_LIVE_LEAGUE_KEYS, {});
-const ALLOWED_LEAGUE_COLLECTOR_KEYS = safeJsonParse(process.env.ALLOWED_LEAGUE_COLLECTOR_KEYS, {});
+const ALLOWED_LIVE_LEAGUE_KEYS = safeJsonParse(
+  process.env.ALLOWED_LIVE_LEAGUE_KEYS,
+  {}
+);
+const ALLOWED_LEAGUE_COLLECTOR_KEYS = safeJsonParse(
+  process.env.ALLOWED_LEAGUE_COLLECTOR_KEYS,
+  {}
+);
 
-const FILTERED_KEYS_LEAGUE = safeJsonParse(process.env.FILTERED_KEYS_LEAGUE, {});
+const FILTERED_KEYS_LEAGUE = safeJsonParse(
+  process.env.FILTERED_KEYS_LEAGUE,
+  {}
+);
 const FILTERED_KEYS_MATCH = safeJsonParse(process.env.FILTERED_KEYS_MATCH, {});
 
 /**
@@ -55,7 +66,8 @@ const isLeagueAllowed = (leagueId) => ALLOWED_LEAGUE_KEYS[leagueId] === true;
  * @param {string} leagueId - Идентификатор лиги.
  * @returns {boolean} Разрешена ли лига для лайв-матчей.
  */
-const isLiveLeagueAllowed = (leagueId) => ALLOWED_LIVE_LEAGUE_KEYS[leagueId] === true;
+const isLiveLeagueAllowed = (leagueId) =>
+  ALLOWED_LIVE_LEAGUE_KEYS[leagueId] === true;
 
 /**
  * Проверяет, разрешена ли лига для коллектора.
@@ -63,9 +75,11 @@ const isLiveLeagueAllowed = (leagueId) => ALLOWED_LIVE_LEAGUE_KEYS[leagueId] ===
  * @param {string} leagueId - Идентификатор лиги.
  * @returns {boolean} Разрешена ли лига для коллектора.
  */
-const isCollectorLeagueAllowed = (leagueId) => ALLOWED_LEAGUE_COLLECTOR_KEYS[leagueId] === true;
+const isCollectorLeagueAllowed = (leagueId) =>
+  ALLOWED_LEAGUE_COLLECTOR_KEYS[leagueId] === true;
 
-const REALTIME_API_URL = process.env.REALTIME_API_URL || 'https://your-realtime-api-url.com/data';
+const REALTIME_API_URL =
+  process.env.REALTIME_API_URL || 'https://your-realtime-api-url.com/data';
 
 export {
   HEADERS,

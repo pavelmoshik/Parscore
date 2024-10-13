@@ -6,7 +6,7 @@ import {
   buildApiUrl,
   isLeagueAllowed,
   FILTERED_KEYS_LEAGUE,
-  FILTERED_KEYS_MATCH
+  FILTERED_KEYS_MATCH,
 } from '../config.js';
 
 const MATCH_DYNAMIC_PART = 'f_4_0_3_ru-kz_1'; // Динамическая часть URL
@@ -19,7 +19,12 @@ const MATCH_DYNAMIC_PART = 'f_4_0_3_ru-kz_1'; // Динамическая час
  * @param {Object} leagueData - Данные лиги.
  * @param {Array} matchData - Данные матчей.
  */
-const saveLeagueData = (structuredData, currentLeague, leagueData, matchData) => {
+const saveLeagueData = (
+  structuredData,
+  currentLeague,
+  leagueData,
+  matchData
+) => {
   if (currentLeague && isLeagueAllowed(leagueData.ZC)) {
     structuredData[currentLeague] = [{ ...leagueData }, [...matchData]];
   }
@@ -38,10 +43,10 @@ const saveLeagueOrMatchData = (key, value, leagueData, matchData) => {
   const isKeyForMatch = FILTERED_KEYS_MATCH[key];
 
   if (isKeyForLeague) leagueData[key] = value;
-  
+
   if (isKeyForMatch) {
-      if (matchData.length === 0 || key === '~AA') matchData.push({});
-      matchData[matchData.length - 1][key] = value;
+    if (matchData.length === 0 || key === '~AA') matchData.push({});
+    matchData[matchData.length - 1][key] = value;
   }
 };
 
@@ -87,7 +92,9 @@ export const fetchAndProcessData = async () => {
     const startRequestTime = performance.now();
     const response = await axios.get(fullUrl, { headers: HEADERS });
     const endRequestTime = performance.now();
-    console.log(`Запрос данных занял ${(endRequestTime - startRequestTime) / 1000} секунд.`);
+    console.log(
+      `Запрос данных занял: ${(endRequestTime - startRequestTime) / 1000} секунд.`
+    );
 
     const data = response.data.split('¬');
     return processData(data);

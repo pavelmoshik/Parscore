@@ -19,17 +19,19 @@ export const fetchLiveMatchData = async (structuredData) => {
     const filteredMatchIds = getFilteredLiveMatchIds(structuredData);
 
     if (filteredMatchIds.length === 0) {
-      console.log("Нет матчей, соответствующих критериям фильтрации.");
+      console.log('Нет матчей, соответствующих критериям фильтрации.');
       return;
     }
 
-    console.log("Отфильтрованные идентификаторы матчей:", filteredMatchIds);
+    console.log('Отфильтрованные идентификаторы матчей:', filteredMatchIds);
 
     // Параллельные запросы к API
-    const fetchPromises = filteredMatchIds.map(matchId => fetchMatchData(matchId));
+    const fetchPromises = filteredMatchIds.map((matchId) =>
+      fetchMatchData(matchId)
+    );
     const results = await Promise.allSettled(fetchPromises);
 
-    results.forEach(result => {
+    results.forEach((result) => {
       if (result.status === 'fulfilled') {
         const { matchId, data } = result.value;
         const structuredMatchData = structureMatchData(data, matchId);
@@ -53,7 +55,9 @@ export const fetchLiveMatchData = async (structuredData) => {
 const getFilteredLiveMatchIds = (structuredData) => {
   return Object.values(structuredData).flatMap(([leagueInfo, matches]) =>
     isLiveLeagueAllowed(leagueInfo['ZC'])
-      ? matches.filter(match => match['AB'] === '2').map(match => match['~AA'])
+      ? matches
+          .filter((match) => match['AB'] === '2')
+          .map((match) => match['~AA'])
       : []
   );
 };
@@ -73,7 +77,9 @@ const fetchMatchData = async (matchId) => {
     console.log(`Данные для матча '${matchId}' получены.`);
     return { matchId, data: response.data };
   } catch (error) {
-    console.error(`Ошибка при получении лайв-матча для ${matchId}: ${error.message}`);
+    console.error(
+      `Ошибка при получении лайв-матча для ${matchId}: ${error.message}`
+    );
     throw error;
   }
 };
@@ -91,11 +97,14 @@ const structureMatchData = (data, matchId) => {
   return {
     [matchId]: sections.reduce((acc, section, index) => {
       const sectionKey = `SE_${index + 1}`;
-      const stats = section.split('¬~SG÷').slice(1).map(stat => (
-        Object.fromEntries(stat.split('¬').map(entry => entry.split('÷')))
-      ));
+      const stats = section
+        .split('¬~SG÷')
+        .slice(1)
+        .map((stat) =>
+          Object.fromEntries(stat.split('¬').map((entry) => entry.split('÷')))
+        );
       acc[sectionKey] = { SG: stats };
       return acc;
-    }, {})
+    }, {}),
   };
 };
