@@ -4,7 +4,7 @@ import { writeFile } from 'fs/promises';
 const headers = { "x-fsign": "SW9D1eZo" };
 
 async function main() {
-  const feed = "df_sui_1_00ON52lf";
+  const feed = "df_sui_1_zw3QPNuQ";
   const url = `https://46.flashscore.ninja/46/x/feed/${feed}`;
 
   
@@ -29,7 +29,7 @@ async function main() {
       console.log(`Время запроса: ${requestTime} мс`);
 
       writeFile("dbmatch.txt", fileContent);
-      console.log("Данные сохранены в файл culd.txt");
+      console.log("Данные сохранены в файл dbmatch.txt");
 
 
     } catch (error) {

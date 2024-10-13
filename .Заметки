@@ -1,0 +1,14 @@
+
+Parscore
+│
+├── src
+│       ├── modules                
+│       │            ├── dataProcessor.js      
+│       │            ├──liveMatchParser.js        
+│       │            ├──teamInfoCollector.js           
+│       │            └── teamStatsParser.js            
+│       │
+│       ├── config.js                             
+│       ├── parscore.js
+│       └── fileManager.js  
+└──  .env                   
