@@ -34,7 +34,7 @@
 
 ## ALLOWED_LEAGUE_KEYS
 
-- `6w8vjEEB`: КАЗАХСТАН: Pro Ligasy
+- `6w8vjEEB`: КАЗАХСТАН: Про Лига
 - `bDSFUcuO`: БЕЛАРУСЬ: Экстралига
 - `OAY61TQk`: США: АХЛ
 - `zXOfZN3k`: США: AHL - Предсезонка

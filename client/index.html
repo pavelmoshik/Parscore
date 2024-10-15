@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Управление значениями .env</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    body.loaded {
+      opacity: 1;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      /* Уменьшение промежутков между блоками */
+    }
+
+    .section {
+      padding: 5px;
+      /* Уменьшение внутреннего отступа */
+      border-radius: 8px;
+      background-color: #3a3a3a;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      flex: 1 1 18%;
+      /* Каждый блок будет занимать около 18% ширины, чтобы вместить больше блоков в строке */
+      min-width: 150px;
+      /* Минимальная ширина для адаптивности */
+    }
+
+    h1,
+    h2 {
+      color: #ffffff;
+      font-size: 16px;
+      /* Уменьшение шрифта заголовков */
+    }
+
+    h2 {
+      margin-bottom: 5px;
+    }
+
+    .toggle {
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type='checkbox'] {
+      appearance: none;
+      width: 40px;
+      height: 20px;
+      background-color: #555;
+      /* Тёмный фон переключателей */
+      border-radius: 20px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.2s;
+    }
+
+    input[type='checkbox']:checked {
+      background-color: #27882b;
+      /* Зелёный при выборе */
+    }
+
+    input[type='checkbox']:checked::after {
+      left: calc(100% - 20px);
+    }
+
+    input[type='checkbox']::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      /* Белый переключатель */
+      border-radius: 50%;
+      transition: left 0.2s;
+    }
+
+    input[type='checkbox'].toggle-all:checked::before,
+    input[type='checkbox'].toggle-all:checked::after {
+      left: calc(100% - 20px);
+    }
+
+    input[type='checkbox'].toggle-all::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background-color: #ee0000;
+      /* Красный переключатель */
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .toggle-all-label {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-all-label {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-all-label {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #e9e9e9;
+      color: #ffffff;
+      border: none;
+      padding: 5px 10px;
+      /* Уменьшение кнопки */
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      /* Уменьшение шрифта кнопки */
+      margin-top: 10px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <h1>Управление значениями .env</h1>
+
+  <div class="container">
+    <div class="section" id="allowed-league-collector">
+      <h2>Разрешённые лиги для коллектора</h2>
+      <label class="toggle-all-label">
+        <input type="checkbox" class="toggle-all" data-parent="ALLOWED_LEAGUE_COLLECTOR_KEYS" />
+        <span>Включить все</span>
+      </label>
+      <div id="allowed-league-collector-toggles"></div>
+    </div>
+
+    <div class="section" id="filtered-keys-league">
+      <h2>Отфильтрованные ключи лиг</h2>
+      <label class="toggle-all-label">
+        <input type="checkbox" class="toggle-all" data-parent="FILTERED_KEYS_LEAGUE" />
+        <span>Включить все</span>
+      </label>
+      <div id="filtered-keys-league-toggles"></div>
+    </div>
+
+    <div class="section" id="filtered-keys-match">
+      <h2>Отфильтрованные ключи матчей</h2>
+      <label class="toggle-all-label">
+        <input type="checkbox" class="toggle-all" data-parent="FILTERED_KEYS_MATCH" />
+        <span>Включить все</span>
+      </label>
+      <div id="filtered-keys-match-toggles"></div>
+    </div>
+
+    <div class="section" id="allowed-league-keys">
+      <h2>Разрешённые лиги</h2>
+      <label class="toggle-all-label">
+        <input type="checkbox" class="toggle-all" data-parent="ALLOWED_LEAGUE_KEYS" />
+        <span>Включить все</span>
+      </label>
+      <div id="allowed-league-keys-toggles"></div>
+    </div>
+
+    <div class="section" id="allowed-live-league-keys">
+      <h2>Разрешённые лиги для лайв-матчей</h2>
+      <label class="toggle-all-label">
+        <input type="checkbox" class="toggle-all" data-parent="ALLOWED_LIVE_LEAGUE_KEYS" />
+        <span>Включить все</span>
+      </label>
+      <div id="allowed-live-league-keys-toggles"></div>
+    </div>
+  </div>
+
+  <button id="save">Сохранить изменения</button>
+
+  <script>
+    // Когда страница загружена, добавляем класс 'loaded' для плавного появления
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+    const saveButton = document.getElementById('save');
+
+    // Названия для ключей
+    const keyNames = {
+      ALLOWED_LEAGUE_COLLECTOR_KEYS: {
+        '6w8vjEEB': 'КАЗАХСТАН: Про Лига',
+        'bDSFUcuO': 'БЕЛАРУСЬ: Экстралига',
+        'OAY61TQk': 'США: АХЛ',
+        'EiRF9iJ9': 'США: НХЛ',
+        '4MyUlev0': 'РОССИЯ: КХЛ',
+        'SrRLtalU': 'СЛОВАКИЯ: Экстралига',
+        'Um7lLdAD': 'ПОЛЬША: Хоккейная Лига',
+        'AexB0vAo': 'ЧЕХИЯ: Экстралига',
+        'va68OPDQ': 'ФИНЛЯНДИЯ: Метис',
+        'IDidsgkN': 'ШВЕЙЦАРИЯ: Швейцарская лига',
+        'O6zype54': 'ШВЕЙЦАРИЯ: Национальная лига',
+        'xMnM58Wl': 'ШВЕЦИЯ: Элитсериен',
+        'bqs05p7l': 'ДАНИЯ: Метал-лига',
+        'ARKGM9Yj': 'ФРАНЦИЯ: Магнус лига',
+        'jqu1J25e': 'ЕВРОПА: Лига чемпионов',
+      },
+      FILTERED_KEYS_LEAGUE: {
+        'ZY': 'Страна',
+        'ZC': 'ID лиги',
+        'ZL': 'Ссылка',
+        'OAJ': 'Логотип',
+        'ZX': 'Разряд',
+      },
+      FILTERED_KEYS_MATCH: {
+        '~AA': 'ID матча',
+        'AD': 'Дата начала игры',
+        'AB': 'Статус игры',
+        'CX': 'Домашняя команда',
+        'AO': 'Дата окончания игры',
+        'JA': 'ID команды 1',
+        'OA': 'Логотип команды 1',
+        'AE': 'Название команды 1',
+        'WM': 'Абревиатура команды 1',
+        'AG': 'Счет команды 1',
+        'AJ': 'Удаление команды 1 ??',
+        'BC': 'Автогол команды 1 ??',
+        'JB': 'ID команды 2',
+        'OB': 'Логотип команды 2',
+        'AF': 'Название команды 2',
+        'WN': 'Абревиатура команды 2',
+        'AH': 'Счет команды 2',
+        'AK': 'Удаление команды 2 ??',
+        'BD': 'Автогол команды 2 ??',
+      },
+      ALLOWED_LEAGUE_KEYS: {
+        '6w8vjEEB': 'КАЗАХСТАН: Про Лига',
+        'bDSFUcuO': 'БЕЛАРУСЬ: Экстралига',
+        'OAY61TQk': 'США: АХЛ',
+        'EiRF9iJ9': 'США: НХЛ',
+        '4MyUlev0': 'РОССИЯ: КХЛ',
+        'SrRLtalU': 'СЛОВАКИЯ: Экстралига',
+        'Um7lLdAD': 'ПОЛЬША: Экстралига',
+        'AexB0vAo': 'ЧЕХИЯ: Экстралига',
+        'va68OPDQ': 'ФИНЛЯНДИЯ: Метис',
+        'IDidsgkN': 'ШВЕЙЦАРИЯ: Швейцарская лига',
+        'O6zype54': 'ШВЕЙЦАРИЯ: Национальная лига',
+        'xMnM58Wl': 'ШВЕЦИЯ: Элитсериен',
+        'bqs05p7l': 'ДАНИЯ: Метал-лига',
+        'ARKGM9Yj': 'ФРАНЦИЯ: Магнус лига',
+        'jqu1J25e': 'ЕВРОПА: Лига чемпионов',
+      },
+      ALLOWED_LIVE_LEAGUE_KEYS: {
+        'EiRF9iJ9': 'США: НХЛ',
+        '4MyUlev0': 'РОССИЯ: КХЛ',
+        'SrRLtalU': 'СЛОВАКИЯ: Экстралига',
+        'Um7lLdAD': 'ПОЛЬША: Хоккейная Лига',
+        'AexB0vAo': 'ЧЕХИЯ: Экстралига',
+        'va68OPDQ': 'ФИНЛЯНДИЯ: Метис',
+        'IDidsgkN': 'ШВЕЙЦАРИЯ: Швейцарская лига',
+        'O6zype54': 'ШВЕЙЦАРИЯ: Национальная лига',
+        'xMnM58Wl': 'ШВЕЦИЯ: Элитсериен',
+        'bqs05p7l': 'ДАНИЯ: Метал-лига',
+        'ARKGM9Yj': 'ФРАНЦИЯ: Магнус лига',
+        'jqu1J25e': 'ЕВРОПА: Лига чемпионов',
+      },
+    };
+
+    // Получаем текущие значения .env
+    fetch('/api/env')
+      .then((response) => response.json())
+      .then((env) => {
+        // Создаем переключатели для ALLOWED_LEAGUE_COLLECTOR_KEYS
+        createToggles(
+          env.ALLOWED_LEAGUE_COLLECTOR_KEYS,
+          'ALLOWED_LEAGUE_COLLECTOR_KEYS',
+          'allowed-league-collector-toggles'
+        );
+        // Создаем переключатели для FILTERED_KEYS_LEAGUE
+        createToggles(
+          env.FILTERED_KEYS_LEAGUE,
+          'FILTERED_KEYS_LEAGUE',
+          'filtered-keys-league-toggles'
+        );
+        // Создаем переключатели для FILTERED_KEYS_MATCH
+        createToggles(
+          env.FILTERED_KEYS_MATCH,
+          'FILTERED_KEYS_MATCH',
+          'filtered-keys-match-toggles'
+        );
+        // Создаем переключатели для ALLOWED_LEAGUE_KEYS
+        createToggles(
+          env.ALLOWED_LEAGUE_KEYS,
+          'ALLOWED_LEAGUE_KEYS',
+          'allowed-league-keys-toggles'
+        );
+        // Создаем переключатели для ALLOWED_LIVE_LEAGUE_KEYS
+        createToggles(
+          env.ALLOWED_LIVE_LEAGUE_KEYS,
+          'ALLOWED_LIVE_LEAGUE_KEYS',
+          'allowed-live-league-keys-toggles'
+        );
+        updateToggleAllButtons(); // Обновляем текст кнопок
+      });
+
+    // Функция для создания переключателей
+    function createToggles(data, key, containerId) {
+      const parsedData = JSON.parse(data);
+      const container = document.getElementById(containerId);
+      Object.keys(parsedData).forEach((k) => {
+        const label = document.createElement('label');
+
+        label.className = 'toggle';
+        label.innerHTML = `<input type="checkbox" ${parsedData[k] ? 'checked' : ''} data-key="${k}" data-parent="${key}">
+                    ${keyNames[key][k]}`; // Используем названия для ключей
+
+        container.appendChild(label);
+
+        // Добавляем обработчик для изменения состояния переключателя
+        label
+          .querySelector('input[type="checkbox"]')
+          .addEventListener('change', () => {
+            updateToggleAllButtons(); // Обновляем текст кнопки при изменении состояния
+          });
+      });
+
+      // Добавляем обработчик для кнопки "включить все/выключить все"
+      const toggleAllButton = document.querySelector(
+        `.toggle-all[data-parent="${key}"]`
+      );
+      toggleAllButton.addEventListener('click', () => {
+        const checkboxes = container.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        const allChecked = Array.from(checkboxes).every(
+          (checkbox) => checkbox.checked
+        );
+
+        // Переключаем состояние всех чекбоксов
+        checkboxes.forEach((checkbox) => (checkbox.checked = !allChecked));
+        updateToggleAllButtons(); // Обновляем текст кнопки после изменения
+      });
+    }
+
+    // Обновляем текст кнопок "включить все/выключить все"
+    function updateToggleAllButtons() {
+      document.querySelectorAll('.section').forEach((section) => {
+        const checkboxes = section.querySelectorAll(
+          'input[type="checkbox"]:not(.toggle-all)'
+        );
+        const toggleAllCheckbox = section.querySelector('.toggle-all');
+        const toggleAllLabel = section.querySelector(
+          '.toggle-all-label span'
+        );
+        const checkedCount = Array.from(checkboxes).filter(
+          (checkbox) => checkbox.checked
+        ).length;
+        const totalCount = checkboxes.length;
+
+        if (checkedCount === totalCount) {
+          toggleAllCheckbox.checked = true;
+          toggleAllLabel.textContent = 'Выключить все';
+        } else if (checkedCount === 0) {
+          toggleAllCheckbox.checked = false;
+          toggleAllLabel.textContent = 'Включить все';
+        } else {
+          toggleAllCheckbox.checked = false;
+          toggleAllLabel.textContent = 'Включить все';
+        }
+      });
+    }
+
+    // Сохраняем изменения
+    saveButton.addEventListener('click', () => {
+      const newEnv = {
+        ALLOWED_LEAGUE_COLLECTOR_KEYS: {},
+        FILTERED_KEYS_LEAGUE: {},
+        FILTERED_KEYS_MATCH: {},
+        ALLOWED_LEAGUE_KEYS: {},
+        ALLOWED_LIVE_LEAGUE_KEYS: {},
+      };
+      document
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((checkbox) => {
+          if (checkbox.classList.contains('toggle-all')) return;
+          const parentKey = checkbox.dataset.parent;
+          newEnv[parentKey][checkbox.dataset.key] = checkbox.checked;
+        });
+
+      // Преобразуем объект в строку JSON
+      Object.keys(newEnv).forEach((key) => {
+        newEnv[key] = JSON.stringify(newEnv[key]);
+      });
+
+      fetch('/api/env', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEnv),
+      })
+        .then((response) => response.json())
+        .then((data) => alert(data.message))
+        .catch((error) => console.error('Ошибка:', error));
+    });
+  </script>
+</body>
+
+</html>
