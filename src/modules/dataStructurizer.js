@@ -29,7 +29,7 @@ export function parseDataToArray(data, matchIds) {
     // 'KN',
     // 'KS',
   ]);
-  const MIN_DATE_THRESHOLD = 1725138000; // Пороговая дата
+  const MIN_DATE_THRESHOLD = 1722459600; // Пороговая дата
   const entries = data.split('~');
 
   let currentSAObject = null;

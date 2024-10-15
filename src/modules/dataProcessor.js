@@ -93,7 +93,7 @@ export const fetchAndProcessData = async () => {
     const response = await axios.get(fullUrl, { headers: HEADERS });
     const endRequestTime = performance.now();
     console.log(
-      `Запрос данных занял: ${(endRequestTime - startRequestTime) / 1000} секунд.`
+      `Запрос данных занял: ${((endRequestTime - startRequestTime) / 1000).toFixed(2)} секунд.`
     );
 
     const data = response.data.split('¬');
